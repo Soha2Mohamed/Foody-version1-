@@ -1,0 +1,96 @@
+﻿@model Foody.Models.AddRecipeViewModel
+
+<form asp-action="AddRecipe" method="post" enctype="multipart/form-data">
+    <div>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description"></textarea>
+    </div>
+
+    <div>
+        <label asp-for="Instructions"></label>
+        <textarea asp-for="Instructions"></textarea>
+        <span asp-validation-for="Instructions" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="CookingTime"></label>
+        <input asp-for="CookingTime" />
+        <span asp-validation-for="CookingTime" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Cuisine"></label>
+        <input asp-for="Cuisine" />
+    </div>
+
+    <div>
+        <label asp-for="Notes"></label>
+        <textarea asp-for="Notes"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="RecipePicture">Upload Recipe Picture</label>
+        <input type="file" name="RecipePicture" class="form-control" />
+    </div>
+
+    <div>
+        <h4>Ingredients</h4>
+        <div id="ingredients-list">
+            @for (int i = 0; i < Model.Ingredients.Count; i++)
+            {
+                <div class="ingredient-item" id="ingredient-item-@i">
+                    <label asp-for="Ingredients[i].Name">Ingredient Name</label>
+                    <input asp-for="Ingredients[i].Name" />
+
+                    <label asp-for="Ingredients[i].Quantity">Quantity</label>
+                    <input asp-for="Ingredients[i].Quantity" />
+
+                    <button type="button" class="remove-ingredient-btn" onclick="removeIngredient(@i)">Remove</button>
+                </div>
+            }
+        </div>
+
+        <!-- Add Ingredient Button -->
+        <button type="button" id="add-ingredient-btn">Add Ingredient</button>
+    </div>
+
+    <button type="submit">Add Recipe</button>
+</form>
+
+@section Scripts {
+    <script>
+        let ingredientIndex = @Model.Ingredients.Count;  // Start with the count of existing ingredients
+
+        // Function to add a new ingredient input
+        document.getElementById('add-ingredient-btn').addEventListener('click', function() {
+            const ingredientsList = document.getElementById('ingredients-list');
+            const newIngredient = `
+                <div class="ingredient-item" id="ingredient-item-${ingredientIndex}">
+                    <label for="Ingredients_${ingredientIndex}__Name">Ingredient Name</label>
+                    <input name="Ingredients[${ingredientIndex}].Name" id="Ingredients_${ingredientIndex}__Name" />
+
+                    <label for="Ingredients_${ingredientIndex}__Quantity">Quantity</label>
+                    <input name="Ingredients[${ingredientIndex}].Quantity" id="Ingredients_${ingredientIndex}__Quantity" />
+
+                    <button type="button" class="remove-ingredient-btn" onclick="removeIngredient(${ingredientIndex})">Remove</button>
+                </div>
+            `;
+            ingredientsList.insertAdjacentHTML('beforeend', newIngredient);
+            ingredientIndex++;
+        });
+
+        // Function to remove an ingredient input
+        function removeIngredient(index) {
+            const ingredientItem = document.getElementById(`ingredient-item-${index}`);
+            if (ingredientItem) {
+                ingredientItem.remove();
+            }
+        }
+    </script>
+}

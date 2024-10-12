@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Foody.Migrations
 {
     [DbContext(typeof(ApplicationDbcontext))]
-    [Migration("20240921123047_addingValidationtoUser")]
-    partial class addingValidationtoUser
+    [Migration("20241006112946_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,30 +55,6 @@ namespace Foody.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Foody.Models.FeaturedMeal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Week_of")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("FeaturedMeals");
-                });
-
             modelBuilder.Entity("Foody.Models.Ingredient", b =>
                 {
                     b.Property<int>("Id")
@@ -91,16 +67,10 @@ namespace Foody.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Quantity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("int");
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RecipeId");
 
                     b.ToTable("Ingredients");
                 });
@@ -182,10 +152,6 @@ namespace Foody.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Ingredients")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Instructions")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -220,6 +186,28 @@ namespace Foody.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("Foody.Models.RecipeIngredient", b =>
+                {
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.HasKey("RecipeId", "IngredientId");
+
+                    b.HasIndex("IngredientId");
+
+                    b.ToTable("RecipeIngredients");
                 });
 
             modelBuilder.Entity("Foody.Models.User", b =>
@@ -258,6 +246,24 @@ namespace Foody.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Foody.Models.cookLater", b =>
+                {
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Added_at")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("RecipeId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CookLaters");
+                });
+
             modelBuilder.Entity("Foody.Models.Comment", b =>
                 {
                     b.HasOne("Foody.Models.Recipe", "Recipe")
@@ -275,28 +281,6 @@ namespace Foody.Migrations
                     b.Navigation("Recipe");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Foody.Models.FeaturedMeal", b =>
-                {
-                    b.HasOne("Foody.Models.Recipe", "Recipe")
-                        .WithMany()
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Recipe");
-                });
-
-            modelBuilder.Entity("Foody.Models.Ingredient", b =>
-                {
-                    b.HasOne("Foody.Models.Recipe", "Recipe")
-                        .WithMany()
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Recipe");
                 });
 
             modelBuilder.Entity("Foody.Models.Playlist", b =>
@@ -348,18 +332,67 @@ namespace Foody.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Foody.Models.RecipeIngredient", b =>
+                {
+                    b.HasOne("Foody.Models.Ingredient", "Ingredient")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Foody.Models.Recipe", "Recipe")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient");
+
+                    b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("Foody.Models.cookLater", b =>
+                {
+                    b.HasOne("Foody.Models.Recipe", "Recipe")
+                        .WithMany("CookLaters")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Foody.Models.User", "User")
+                        .WithMany("CookLaters")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Foody.Models.Ingredient", b =>
+                {
+                    b.Navigation("RecipeIngredients");
+                });
+
             modelBuilder.Entity("Foody.Models.Recipe", b =>
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("CookLaters");
+
                     b.Navigation("Playlists");
 
                     b.Navigation("Ratings");
+
+                    b.Navigation("RecipeIngredients");
                 });
 
             modelBuilder.Entity("Foody.Models.User", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("CookLaters");
 
                     b.Navigation("Playlists");
 

@@ -1,0 +1,59 @@
+﻿@model EditRecipeViewModel
+
+<h2>Edit Your Recipe</h2>
+<form asp-action="EditRecipe" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Instructions"></label>
+        <textarea asp-for="Instructions" class="form-control"></textarea>
+        <span asp-validation-for="Instructions" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CookingTIme"></label>
+        <textarea asp-for="CookingTIme" class="form-control"></textarea>
+        <span asp-validation-for="CookingTIme" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Cuisine"></label>
+        <textarea asp-for="Cuisine" class="form-control"></textarea>
+        <span asp-validation-for="Cuisine" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Notes"></label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="RecipePicture"></label>
+        <input asp-for="RecipePicture" type="file" class="form-control" />
+        <span asp-validation-for="RecipePicture" class="text-danger"></span>
+    </div>
+    @if (Model.Ingredients != null && Model.Ingredients.Any())
+    {
+        foreach (var ingredient in Model.Ingredients)
+        {
+            <div>
+                <input type="text" value="@ingredient.Name" />
+                <input type="number" value="@ingredient.Quantity" />
+            </div>
+        }
+    }
+    else
+    {
+        <p>No ingredients found.</p>
+    }
+    <button type="submit">Save Changes</button>
+</form>

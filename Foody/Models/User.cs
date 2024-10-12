@@ -28,5 +28,7 @@ namespace Foody.Models
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Playlist> Playlists { get; set; }
 
+        public ICollection<cookLater> CookLaters { get; set; }
+
     }
 }

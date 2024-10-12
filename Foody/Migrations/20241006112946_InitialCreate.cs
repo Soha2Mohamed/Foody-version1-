@@ -6,11 +6,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Foody.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate1 : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Ingredients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ingredients", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -20,7 +34,7 @@ namespace Foody.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descriptionn = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Created_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -37,14 +51,16 @@ namespace Foody.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Ingredients = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Instructions = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CookingTIme = table.Column<int>(type: "int", nullable: false),
                     RatingAverage = table.Column<float>(type: "real", nullable: false),
                     Cuisine = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Updated_at = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RecipePicture = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    recipePhotoss = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,45 +101,26 @@ namespace Foody.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FeaturedMeals",
+                name: "CookLaters",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     RecipeId = table.Column<int>(type: "int", nullable: false),
-                    Rating = table.Column<int>(type: "int", nullable: false),
-                    Week_of = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Added_at = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FeaturedMeals", x => x.Id);
+                    table.PrimaryKey("PK_CookLaters", x => new { x.RecipeId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_FeaturedMeals_Recipes_RecipeId",
+                        name: "FK_CookLaters_Recipes_RecipeId",
                         column: x => x.RecipeId,
                         principalTable: "Recipes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Ingredients",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RecipeId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ingredients", x => x.Id);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Ingredients_Recipes_RecipeId",
-                        column: x => x.RecipeId,
-                        principalTable: "Recipes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_CookLaters_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -179,6 +176,30 @@ namespace Foody.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RecipeIngredients",
+                columns: table => new
+                {
+                    RecipeId = table.Column<int>(type: "int", nullable: false),
+                    IngredientId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<double>(type: "float", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecipeIngredients", x => new { x.RecipeId, x.IngredientId });
+                    table.ForeignKey(
+                        name: "FK_RecipeIngredients_Ingredients_IngredientId",
+                        column: x => x.IngredientId,
+                        principalTable: "Ingredients",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RecipeIngredients_Recipes_RecipeId",
+                        column: x => x.RecipeId,
+                        principalTable: "Recipes",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_RecipeId",
                 table: "Comments",
@@ -190,14 +211,9 @@ namespace Foody.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FeaturedMeals_RecipeId",
-                table: "FeaturedMeals",
-                column: "RecipeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Ingredients_RecipeId",
-                table: "Ingredients",
-                column: "RecipeId");
+                name: "IX_CookLaters_UserId",
+                table: "CookLaters",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Playlists_RecipeId",
@@ -220,6 +236,11 @@ namespace Foody.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RecipeIngredients_IngredientId",
+                table: "RecipeIngredients",
+                column: "IngredientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Recipes_UserId",
                 table: "Recipes",
                 column: "UserId");
@@ -232,16 +253,19 @@ namespace Foody.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
-                name: "FeaturedMeals");
-
-            migrationBuilder.DropTable(
-                name: "Ingredients");
+                name: "CookLaters");
 
             migrationBuilder.DropTable(
                 name: "Playlists");
 
             migrationBuilder.DropTable(
                 name: "Ratings");
+
+            migrationBuilder.DropTable(
+                name: "RecipeIngredients");
+
+            migrationBuilder.DropTable(
+                name: "Ingredients");
 
             migrationBuilder.DropTable(
                 name: "Recipes");

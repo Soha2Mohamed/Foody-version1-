@@ -8,8 +8,33 @@
     <img src="~/uploads/@Model.ProfilePicture" alt="Profile Picture" class="img-thumbnail" />
 
 
-    <!-- Edit icon linking to the EditProfile page -->
+    <!-- Link to Edit Profile -->
     <a href="@Url.Action("EditProfile", "Users")">
         <i class="fa fa-edit"></i> Edit Profile
     </a>
+
+    <!-- Link to Timeline -->
+    <a href="@Url.Action("Timeline", "Recipes")">
+        <i class="fa fa-home"></i> Timeline
+    </a>
+
+    <!-- Link to View Recipes -->
+    <a href="@Url.Action("ViewRecipes", "Recipes")">
+        <i class="fa fa-book"></i> View Recipes
+    </a>
+
+    <!-- Link to Delete User -->
+    <a href="@Url.Action("Delete", "Users")" onclick="return confirm('Are you sure you want to delete your account? This action is irreversible.');">
+        <i class="fa fa-trash"></i> Delete Account
+    </a>
+    <a href="@Url.Action("AddRecipe", "Recipes")">
+        <i class="fa fa-trash"></i> Add Recipe
+    </a>
+
+    <!-- Link to Logout -->
+    <a href="@Url.Action("Logout", "Users")">
+        <i class="fa fa-sign-out"></i> Logout
+    </a>
+
+
 </div>

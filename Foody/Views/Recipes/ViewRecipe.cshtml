@@ -1,0 +1,38 @@
+﻿@model Recipe  
+<div class="profile-info">
+    <!-- Display recipe info -->
+    <h2>@Model.Name's Recipe</h2>
+    <p><strong>Description:</strong> @Model.Description</p>
+    <p><strong>Instructions:</strong> @Model.Instructions</p>
+    <p><strong>Cooking Time:</strong> @Model.CookingTIme minutes</p>
+    <p><strong>Cuisine:</strong> @Model.Cuisine</p>
+    <p><strong>Notes:</strong> @Model.Notes</p>
+    <img src="~/RecipesUploads/@Model.RecipePicture" alt="Recipe Picture" class="img-thumbnail" />
+
+    <!-- Display Ingredients -->
+    <h3>Ingredients</h3>
+    <ul>
+        @foreach (var ingredient in Model.RecipeIngredients)
+        {
+            <li>@ingredient.Quantity @ingredient.RecipeId - @ingredient.Name</li>
+        }
+    </ul>
+
+    <!-- Delete Recipe Button -->
+    <form asp-action="DeleteRecipe" asp-route-id="@Model.Id" method="post">
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+
+    <!-- Back to Profile Button -->
+    <a class="btn btn-secondary" asp-action="Profile" asp-controller="Users">
+        Go to Profile
+    </a>
+
+    <!-- Go Back Button -->
+    <a class="btn btn-primary" asp-action="AddRecipe" asp-controller="Recipes">
+        Go Back
+    </a>
+    <form asp-action="EditRecipe" asp-route-id="@Model.Id" method="post">
+        <button type="submit" class="btn btn-danger">Edit  recipe</button>
+    </form>
+</div>

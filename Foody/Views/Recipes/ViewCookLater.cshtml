@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Foody.Models.cookLater>
+
+@{
+    ViewData["Title"] = "Your Cook Later Recipes";
+}
+
+<h2>Your Cook Later List</h2>
+
+@if (Model.Count() == 0)
+{
+    <p>You have no recipes in your Cook Later list.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Recipe Name</th>
+                <th>Description</th>
+                <th>Date Added</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Recipe.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Recipe.Description)</td>
+                    <td>@item.Added_at.ToString("MM/dd/yyyy")</td>
+                    <td>
+                        <a href="@Url.Action("ViewRecipe", "Recipes", new { id = item.RecipeId })" class="btn btn-info">View Recipe</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

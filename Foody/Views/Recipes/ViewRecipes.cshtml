@@ -1,0 +1,40 @@
+﻿@model List<Recipe>
+
+<div class="recipe-list">
+    @if (Model != null && Model.Count > 0)
+    {
+        @foreach (var recipe in Model)
+        {
+            <div class="recipe-block">
+                <h3>@recipe.Name</h3>
+                <p>
+                    <strong>Ingredients:</strong>
+                    @if (recipe.RecipeIngredients != null && recipe.RecipeIngredients.Count > 0)
+                    {
+                        <ul>
+                            @foreach (var ingredient in recipe.RecipeIngredients)
+                            {
+                                <li>@ingredient.Quantity @ingredient.RecipeId - @ingredient.Name</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>No ingredients available.</span>
+                    }
+                </p>
+                <p><strong>Cooking Time:</strong> @recipe.CookingTIme minutes</p>
+                <form asp-action="ViewRecipe" asp-route-id="@recipe.Id" method="post">
+                    <button type="submit" class="btn btn-primary">View Recipe</button>
+                </form>
+                <form asp-action="DeleteRecipe" asp-route-id="@recipe.Id" method="post">
+                    <button type="submit" class="btn btn-primary">Delete Recipe</button>
+                </form>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No recipes found.</p>
+    }
+</div>

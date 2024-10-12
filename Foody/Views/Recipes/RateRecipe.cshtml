@@ -1,0 +1,12 @@
+﻿<form asp-action="RateRecipe" method="post">
+    <input type="hidden" name="recipeId" value="@Model.Id" /> <!-- RecipeId is passed here -->
+
+    <label>Rate this Recipe:</label><br>
+    <input type="radio" name="ratingValue" value="1" /> 1<br>
+    <input type="radio" name="ratingValue" value="2" /> 2<br>
+    <input type="radio" name="ratingValue" value="3" /> 3<br>
+    <input type="radio" name="ratingValue" value="4" /> 4<br>
+    <input type="radio" name="ratingValue" value="5" /> 5<br>
+
+    <button type="submit">Submit Rating</button>
+</form>
